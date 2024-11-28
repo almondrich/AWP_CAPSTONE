@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+< lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="../tables/request_design.css">
 </head>
-<body>
+<>
     <div class="wrapper">
         <div class="sidebar">
             <h4 class="text-center">Requisition Dashboard</h4>
@@ -239,6 +239,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Attach handlers for existing items
         document.querySelectorAll('.card-item').forEach(attachQuantityHandlers);
     </script>
-</body>
-</html>
-jhjkj
