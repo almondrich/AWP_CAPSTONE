@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $position = trim($_POST['position']);
 
     // Prepare the SQL statement
-    $stmt = $con->prepare("INSERT INTO users (name, email, password, department, position) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $con->prepare("INSERT INTO user (name, email, password, department, position) VALUES (?, ?, ?, ?, ?)");
 
     // Check if prepare() failed
     if ($stmt === false) {

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (password_verify($password, $hashed_password)) {
             $_SESSION['user_id'] = $user_id;
-            header("Location: requisition_form.php");
+            header("Location: dashboard_user.php");
         } else {
             echo "Invalid email or password.";
         }

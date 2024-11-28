@@ -20,7 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validate inputs
     if (empty($items) || empty($quantities) || empty($units) || count($items) !== count($quantities) || count($items) !== count($units)) {
-        echo "Error: Please select at least one item and provide its quantity.";
+        echo "<script>
+                Swal.fire('Error', 'Please select at least one item and provide its quantity.', 'error');
+              </script>";
         exit;
     }
 
@@ -49,11 +51,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Commit transaction
         $con->commit();
-        echo "Requisition submitted successfully.";
+
+        // Success alert and redirection
+        echo "<script>
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Requisition submitted successfully.',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.href = 'user_dash.php'; // Redirect to request history
+                });
+              </script>";
     } catch (Exception $e) {
-        // Rollback on error
+        // Rollback on error and display an error alert
         $con->rollback();
-        echo "Error: " . $e->getMessage();
+        echo "<script>
+                Swal.fire('Error', '" . $e->getMessage() . "', 'error');
+              </script>";
     } finally {
         if (isset($stmt)) $stmt->close();
         $con->close();
@@ -61,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 ?>
 <!DOCTYPE html>
-< lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -69,16 +85,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="../tables/request_design.css">
+    <link rel="stylesheet" href="../tables/request_design2.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
-<>
-    <div class="wrapper">
-        <div class="sidebar">
-            <h4 class="text-center">Requisition Dashboard</h4>
-            <a href="dashboard.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="requisition_form.php" class="nav-link"><i class="fas fa-file-alt"></i> Requisition Form</a>
-            <a href="user_dash.php" class="nav-link"><i class="fas fa-history"></i> Request History</a>
-            <a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        <!-- Logo and Title -->
+        <a class="navbar-brand d-flex align-items-center" href="department_dean.php">
+            <img src="../../dist/img/sjcbaggao.png" alt="Logo" width="300" height="75">
+            <span class="fs-5 fw-bold" style="color:white;"> | user Portal</span>
+        </a>
+
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a id="navv"  class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'dashboard_user.php' ? 'active' : ''; ?>" href="dashboard_user.php">
+                        <i data-feather="home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a  id="navv" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'requisition_form.php' ? 'active' : ''; ?>" href="requisition_form.php">
+                        <i data-feather="edit"></i> Request
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="navv" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'user_dash.php' ? 'active' : ''; ?>" href="user_dash.php">
+                        <i data-feather="list"></i> Request Status
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="navv" class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'profile.php' ? 'active' : ''; ?>" href="profile.php">
+                        <i data-feather="user"></i> Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="navvv" class="nav-link  <?php echo basename($_SERVER['PHP_SELF']) == 'logout.php' ? 'active' : ''; ?>" href="logout.php">
+                        <i data-feather="log-out"></i> Logout
+                    </a>
+                </li>
+            </ul>
         </div>
+    </div>
+</nav>
 
         <div class="content">
             <div class="form-container">
@@ -96,7 +155,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <?php
                                     $result = $con->query("SELECT items.item_id, items.item_name, items.item_desc, items.qty, units.unit_id, units.unit_desc 
                                                            FROM items 
-                                                           JOIN units ON items.unit_id = units.unit_id");
+                                                           JOIN units ON items.unit_id = units.unit_id ORDER BY items.item_name ASC");
                                     if ($result) {
                                         while ($row = $result->fetch_assoc()) {
                                             echo "<option value='{$row['item_id']}' 
@@ -111,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <p class="item-description" style="font-size: 14px; color: #555;">Description: <span>Not selected</span></p>
                                 <p class="item-stock" style="font-size: 14px; color: #555;">Available Stock: <span>Not selected</span></p>
                             </div>
-                            <div class="unit-container">
+                            <div class=" col-md-4 unit-container">
                                 <label for="unit_id">Unit:</label>
                                 <select name="unit_id[]" class="form-control unit-select" required>
                                     <option value="" disabled selected>Select a unit</option>
@@ -125,12 +184,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     ?>
                                 </select>
                             </div>
-                            <div class="quantity-container">
+                            <div class=" col-md-2 quantity-container">
                                 <label class="quantity-label">Quantity</label>
                                 <div class="quantity-control">
-                                    <button type="button" class="btn btn-secondary decrement-btn">-</button>
+                                    <button type="button" class="decrement-btn" id="but">-</button>
                                     <input type="number" name="quantity[]" class="form-control quantity-input" value="1" min="1" required>
-                                    <button type="button" class="btn btn-secondary increment-btn">+</button>
+                                    <button type="button" class="btn btn-secondary increment-btn"id="but">+</button>
                                 </div>
                             </div>
                         </div>
@@ -176,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <p class="item-description" style="font-size: 14px; color: #555;">Description: <span>Not selected</span></p>
                     <p class="item-stock" style="font-size: 14px; color: #555;">Available Stock: <span>Not selected</span></p>
                 </div>
-                <div class="unit-container">
+                <div class=" col-md-4 unit-container">
                     <label for="unit_id">Unit:</label>
                     <select name="unit_id[]" class="form-control unit-select" required>
                         <option value="" disabled selected>Select a unit</option>
@@ -190,12 +249,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         ?>
                     </select>
                 </div>
-                <div class="quantity-container">
+                <div class=" col-md-2 quantity-container">
                     <label class="quantity-label">Quantity</label>
                     <div class="quantity-control">
-                        <button type="button" class="btn btn-secondary decrement-btn">-</button>
+                        <button type="button" class="btn btn-secondary decrement-btn"id="but">-</button>
                         <input type="number" name="quantity[]" class="form-control quantity-input" value="1" min="1" required>
-                        <button type="button" class="btn btn-secondary increment-btn">+</button>
+                        <button type="button" class="btn btn-secondary increment-btn"id="but">+</button>
                     </div>
                 </div>`;
             itemContainer.appendChild(newItemEntry);
@@ -239,3 +298,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Attach handlers for existing items
         document.querySelectorAll('.card-item').forEach(attachQuantityHandlers);
     </script>
+    <script>
+    feather.replace(); /* Render Feather Icons */
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

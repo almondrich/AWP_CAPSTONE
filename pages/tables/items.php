@@ -482,31 +482,33 @@ $(document).ready(function() {
     });
 
     // Function to handle the "Edit" button click event
-    $(".edit").click(function() {
-        var itemId = $(this).data('id');
-        $.ajax({
-            type: "POST",
-            url: '../Actions/Items/fetchItems.php',
-            data: { 'item_id': itemId },
-            dataType: 'json',
-            success: function(response) {
-                if (response) {
-                    $("#nameitem").val(response.item_name);
-                    $("#item_desc").val(response.item_desc);
-                    $("#selcat").val(response.category_id);
-                    $("#selunit").val(response.unit_id);
-                    $("#qty").val(response.qty);
-                    $("#p_id").val(response.item_id);
-                    $('#modal-default').modal('show');
-                } else {
-                    alert('Error: Item data not found.');
-                }
-            },
-            error: function() {
-                alert('Failed to fetch item data. Please try again.');
+// Use delegated event handling to attach the click event to dynamically loaded elements
+$(document).on("click", ".edit", function () {
+    var itemId = $(this).data('id');
+    $.ajax({
+        type: "POST",
+        url: '../Actions/Items/fetchItems.php',
+        data: { 'item_id': itemId },
+        dataType: 'json',
+        success: function (response) {
+            if (response) {
+                $("#nameitem").val(response.item_name);
+                $("#item_desc").val(response.item_desc);
+                $("#selcat").val(response.category_id);
+                $("#selunit").val(response.unit_id);
+                $("#qty").val(response.qty);
+                $("#p_id").val(response.item_id);
+                $('#modal-default').modal('show');
+            } else {
+                alert('Error: Item data not found.');
             }
-        });
+        },
+        error: function () {
+            alert('Failed to fetch item data. Please try again.');
+        }
     });
+});
+
 
 $(".delete").click(function() {
     var itemId = $(this).data('id'); // Fetch the data-id

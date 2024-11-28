@@ -64,12 +64,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                                 <p>Security</p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a href="employees.php" class="nav-link <?php echo $current_page == 'employees.php' ? 'active' : ''; ?> text-white-50">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Employees</p>
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
                 </li>
 

@@ -1,0 +1,102 @@
+
+        .navbar {
+            background: linear-gradient(to right, #004d00, #000000); /* Dark green to black gradient */
+            border-bottom: 1px solid #002200; /* Subtle darker green border */
+        }
+
+        .navbar-brand {
+            font-family: 'Roboto', sans-serif;
+            color: #ffffff; /* White text for logo/title */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8); /* Subtle shadow */
+        }
+        #navvv
+        {
+            color:#f95858;
+        }
+        #navv
+        {
+            color:white;
+        }
+
+
+
+        .navbar-brand img {
+            padding: 2px;
+        }
+
+        #navvv
+        {
+            color:#f95858;
+        }
+        #navv
+        {
+            color:white;
+            font-size:15px;
+        }
+
+
+
+        .navbar-brand img {
+            padding: 2px;
+        }
+
+        .navbar-nav .nav-link {
+            font-size: 1rem;
+            color: #ffffff;
+            margin-left: 15px;
+            transition: color 0.3s ease-in-out;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #00cc00;
+        }
+
+        .navbar-nav .nav-link.active {
+            color: #ffffff;
+            font-weight: bold;
+            border-bottom: 2px solid #ffffff;
+        
+        }
+
+        .navbar-toggler {
+            border: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url('data:image/svg+xml;charset=UTF8,%3Csvg xmlns%3D%27http://www.w3.org/2000/svg%27 viewBox%3D%270 0 30 30%27%3E%3Cpath stroke%3D%27rgba(255%2C 255%2C 255%2C 1%27 stroke-width%3D%272%27 stroke-linecap%3D%27round%27 stroke-miterlimit%3D%2710%27 d%3D%27M4 7h22M4 15h22M4 23h22%27/%3E%3C/svg%3E'); /* White toggle icon */
+        }
+
+        .content {
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+
+        .card {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th {
+            background-color: #f8f9fa; /* Light gray background for table headers */
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f2f2f2; /* Subtle hover effect */
+        }
+
+        .badge {
+            font-size: 0.85rem;
+            padding: 0.4em 0.6em;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-nav .nav-link {
+                margin-left: 0;
+                padding: 10px 15px;
+            }
+        }
