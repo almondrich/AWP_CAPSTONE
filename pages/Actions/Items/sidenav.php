@@ -34,7 +34,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </li>
 
                 <!-- Library Files -->
-                <li class="nav-item <?php echo in_array($current_page, ['category.php', 'unit.php', 'suppliers.php', 'items.php', 'security.php', 'employees.php']) ? 'menu-open' : ''; ?>">
+                <li class="nav-item <?php echo in_array($current_page, ['category.php', 'unit.php', 'suppliers.php', 'items.php','archived_items.php', 'security.php', 'employees.php']) ? 'menu-open' : ''; ?>">
                     <a href="#" class="nav-link text-white">
                         <i class="nav-icon fas fa-folder"></i>
                         <p>Library Files <i class="fas fa-angle-left right"></i></p>
@@ -56,6 +56,12 @@ $current_page = basename($_SERVER['PHP_SELF']);
                             <a href="items.php" class="nav-link <?php echo $current_page == 'items.php' ? 'active' : ''; ?> text-white-50">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Items</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="archived_items.php" class="nav-link <?php echo $current_page == 'archived_items.php' ? 'active' : ''; ?> text-white-50">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Archieved Items</p>
                             </a>
                         </li>
                         <li class="nav-item">
