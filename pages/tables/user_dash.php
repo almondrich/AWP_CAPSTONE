@@ -15,7 +15,7 @@ $user_id = $_SESSION['user_id'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
+    <title>Department Dean Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -30,7 +30,7 @@ $user_id = $_SESSION['user_id'];
         <!-- Logo and Title -->
         <a class="navbar-brand d-flex align-items-center" href="department_dean.php">
             <img src="../../dist/img/sjcbaggao.png" alt="Logo" width="300" height="75">
-            <span class="fs-5 fw-bold" style="color:white;"> | User Portal</span>
+            <span class="fs-5 fw-bold" style="color:white;"> | Department Dean Portal</span>
         </a>
 
         <!-- Toggle Button for Mobile -->

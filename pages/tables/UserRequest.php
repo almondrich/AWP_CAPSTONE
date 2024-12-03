@@ -10,6 +10,8 @@ $query = "
         i.item_name, 
         un.unit_desc, 
         r.quantity, 
+        r.released_quantity, 
+        r.remaining_quantity, 
         r.status, 
         r.request_date,
         r.department_dean_status,
@@ -85,6 +87,8 @@ $result = $con->query($query);
                                         <th>Item</th>
                                         <th>Unit</th>
                                         <th>Quantity</th>
+                                        <th>Released</th>
+                                        <th>Remaining</th>
                                         <th>Status</th>
                                         <th>Dept Dean</th>
                                         <th>College Dean</th>
@@ -101,12 +105,14 @@ $result = $con->query($query);
                                             <td><?= htmlspecialchars($row['item_name'] ?? 'N/A'); ?></td>
                                             <td><?= htmlspecialchars($row['unit_desc'] ?? 'N/A'); ?></td>
                                             <td><?= htmlspecialchars($row['quantity']); ?></td>
+                                            <td><?= htmlspecialchars($row['released_quantity']); ?></td>
+                                            <td><?= htmlspecialchars($row['remaining_quantity']); ?></td>
                                             <td>
-                                                <span class="badge <?= $row['status'] === 'Pending' ? 'bg-warning text-dark' : ($row['status'] === 'Approved' ? 'bg-success' : 'bg-danger'); ?>">
+                                                <span class="badge <?= $row['status'] === 'Pending' ? 'bg-warning text-dark' : ($row['status'] === 'Approved' ? 'bg-success' : ($row['status'] === 'Partially Released' ? 'bg-info' : 'bg-danger')); ?>">
                                                     <?= htmlspecialchars($row['status']); ?>
                                                 </span>
                                             </td>
-                                            <td>
+ <td>
                                                 <span class="badge <?= $row['department_dean_status'] === 'Approved' ? 'bg-success' : ($row['department_dean_status'] === 'Disapproved' ? 'bg-danger' : 'bg-warning text-dark'); ?>">
                                                     <?= htmlspecialchars($row['department_dean_status'] ?? 'Pending'); ?>
                                                 </span>
@@ -155,6 +161,11 @@ $result = $con->query($query);
                                                                 <i class="fas fa-dolly"></i> Release
                                                             </a>
                                                         </li>
+                                                        <li>
+                                                            <a class="dropdown-item partial-release-btn" data-id="<?= $row['requisition_id']; ?>" data-bs-toggle="modal" data-bs-target="#partialReleaseModal" href="#">
+                                                                <i class="fas fa-boxes"></i> Partial Release
+                                                            </a>
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
@@ -180,6 +191,65 @@ $result = $con->query($query);
     </footer>
 </div>
 
+<!-- Partial Release Modal -->
+<div class="modal fade" id="partialReleaseModal" tabindex="-1" aria-labelledby="partialReleaseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="partialReleaseModalLabel">Partial Release</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="partialReleaseForm" method="POST" action="partialRelease.php">
+                    <input type="hidden" id="requisitionId" name="requisition_id">
+                    <div class="mb-3">
+                        <label for="quantityReleased" class="form-label">Quantity to Release</label>
+                        <input type="number" class="form-control" id="quantityReleased" name="quantity_released" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Release</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Open Partial Release Modal and Set Requisition ID
+    $(document).on('click', '.partial-release-btn', function () {
+        const requisitionId = $(this).data('id');
+        $('#requisitionId').val(requisitionId); // Set the hidden input value
+        $('#partialReleaseModal').modal('show'); // Show the modal
+    });
+
+    // Handle Partial Release Form Submission
+    $('#partialReleaseForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent default form submission
+        const formData = $(this).serialize(); // Serialize form data
+
+        $.ajax({
+            url: 'partialRelease.php', // Backend script to handle release
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                try {
+                    const res = JSON.parse(response); // Parse JSON response
+                    if (res.success) {
+                        Swal.fire('Success', res.message, 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                } catch (err) {
+                    Swal.fire('Error', 'Invalid response from the server.', 'error');
+                }
+            },
+            error: function () {
+                Swal.fire('Error', 'An unexpected error occurred.', 'error');
+            }
+        });
+    });
+</script>
+
+
 <!-- Scripts -->
 <script src="../../plugins/jquery/jquery.min.js"></script>
 <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -189,37 +259,67 @@ $result = $con->query($query);
 <script src="../../dist/js/adminlte.min.js"></script>
 
 <script>
-$(document).on('click', '.update-status', function () {
-    const requisitionId = $(this).data('id');
-    const status = $(this).data('status');
-
-    Swal.fire({
-        title: `Are you sure you want to set this requisition to "${status}"?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, update',
-        cancelButtonText: 'Cancel',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '../Actions/updateRequisitionStatus.php',
-                type: 'POST',
-                data: { requisition_id: requisitionId, status: status },
-                success: function (response) {
-                    const res = JSON.parse(response);
-                    if (res.success) {
-                        Swal.fire('Updated!', res.message, 'success').then(() => location.reload());
-                    } else {
-                        Swal.fire('Error!', res.message, 'error');
-                    }
-                },
-                error: function () {
-                    Swal.fire('Error!', 'Something went wrong.', 'error');
-                }
-            });
-        }
+    // Handle Partial Release Button Click
+    $(document).on('click', '.partial-release-btn', function () {
+        const requisitionId = $(this).data('id');
+        $('#partialReleaseForm #requisitionId').val(requisitionId);
     });
-});
+
+    // Handle Partial Release Form Submission
+    $('#partialReleaseForm').submit(function (e) {
+        e.preventDefault();
+        const formData = $(this).serialize();
+
+        $.ajax({
+            url: '../Actions/partialRelease.php', // Backend script for handling partial releases
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                const res = JSON.parse(response);
+                if (res.success) {
+                    Swal.fire('Released!', res.message, 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Error!', res.message, 'error');
+                }
+            },
+            error: function () {
+                Swal.fire('Error!', 'Something went wrong.', 'error');
+            }
+        });
+    });
+
+    // Handle Status Updates
+    $(document).on('click', '.update-status', function () {
+        const requisitionId = $(this).data('id');
+        const status = $(this).data('status');
+
+        Swal.fire({
+            title: `Are you sure you want to set this requisition to "${status}"?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, update',
+            cancelButtonText: 'Cancel',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '../Actions/updateRequisitionStatus.php',
+                    type: 'POST',
+                    data: { requisition_id: requisitionId, status: status },
+                    success: function (response) {
+                        const res = JSON.parse(response);
+                        if (res.success) {
+                            Swal.fire('Updated!', res.message, 'success').then(() => location.reload());
+                        } else {
+                            Swal.fire('Error!', res.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error!', 'Something went wrong.', 'error');
+                    }
+                });
+            }
+        });
+    });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
