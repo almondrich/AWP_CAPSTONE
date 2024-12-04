@@ -204,6 +204,7 @@ include '../Actions/items/sidenav.php';
 
     <!-- Add Stock Modal -->
 <!-- Add Stock Modal -->
+<!-- Add Stock Modal -->
 <div class="modal fade" id="addStockModal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -221,6 +222,10 @@ include '../Actions/items/sidenav.php';
           <div class="form-group">
             <label>Quantity to Add</label>
             <input type="number" class="form-control" name="addQty" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" class="form-control" name="stockDate" required>
           </div>
         </div>
         <div class="modal-footer">
